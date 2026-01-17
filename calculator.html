@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Калькулятор плана</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+.card {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    width: 340px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+h2 {
+    text-align: center;
+}
+input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+button {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+    border: none;
+    color: white;
+    font-size: 16px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+button:hover {
+    opacity: 0.9;
+}
+.result {
+    margin-top: 20px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+}
+.small {
+    font-size: 14px;
+    font-weight: normal;
+    margin-top: 6px;
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Калькулятор плана</h2>
+
+    <input id="x0" type="number" placeholder="Начальная сумма">
+    <input id="P1" type="number" placeholder="План 1">
+    <input id="P2" type="number" placeholder="План 2">
+    <input id="P3" type="number" placeholder="План 3">
+
+    <button onclick="calculate()">Рассчитать</button>
+
+    <div class="result" id="result"></div>
+</div>
+
+<script>
+function calculate() {
+    let x0 = parseFloat(document.getElementById("x0").value);
+    let P1 = parseFloat(document.getElementById("P1").value);
+    let P2 = parseFloat(document.getElementById("P2").value);
+    let P3 = parseFloat(document.getElementById("P3").value);
+
+    if (isNaN(x0) || isNaN(P1) || isNaN(P2) || isNaN(P3)) {
+        document.getElementById("result").innerText = "Заполните все поля";
+        return;
+    }
+
+    let invSum = 1/P1 + 1/P2 + 1/P3;
+
+    // ЦЕЛЬ = 100.1% => 1.001
+    let target = 1.00001 * 3;
+
+    // ТОЧНАЯ ФОРМУЛА
+    let x = (target - x0 * invSum) / invSum;
+
+    let q1 = (x0 + x) / P1 * 100;
+    let q2 = (x0 + x) / P2 * 100;
+    let q3 = (x0 + x) / P3 * 100;
+    let S = (q1 + q2 + q3) / 3;
+
+    document.getElementById("result").innerHTML = `
+        Нужно выполнять план: <br>
+        <b>${x.toFixed(2)}</b>
+        <div class="small">Месяц 1 = ${q1.toFixed(2)}%</div>
+        <div class="small">Месяц 2 = ${q2.toFixed(2)}%</div>
+        <div class="small">Месяц 3 = ${q3.toFixed(2)}%</div>
+        <div class="small">Квартал = ${S.toFixed(3)}%</div>
+    `;
+}
+</script>
+
+</body>
+</html>
