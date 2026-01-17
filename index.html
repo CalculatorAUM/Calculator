@@ -2,111 +2,264 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>Калькулятор плана</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Калькулятор АУМ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
 <style>
+/* Используем :root для переменных, чтобы они работали глобально */
+:root {
+    --bg: #0b0f1a;
+    --panel: #12172a;
+    --text: #e5e7eb;
+    --muted: #9ca3af;
+    --accent: #6366f1;
+    --border: #1f2937;
+    --input: #0f172a;
+}
+
+/* Класс light вешаем на html, переменные переопределяются для всего документа */
+html.light {
+    --bg: #f3f4f6;
+    --panel: #ffffff;
+    --text: #111827;
+    --muted: #6b7280;
+    --accent: #4f46e5;
+    --border: #e5e7eb;
+    --input: #f9fafb;
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #4facfe, #00f2fe);
+    margin: 0;
+    font-family: Inter, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    padding: 20px;
+    /* Плавный переход цвета фона при смене темы */
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.wrapper {
+    width: 100%;
+    max-width: 420px; 
+    background: var(--panel);
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.35);
+    transition: background-color 0.3s ease;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 22px;
+}
+
+h1 {
+    font-size: 18px;
+    font-weight: 600;
     margin: 0;
 }
-.card {
-    background: white;
-    padding: 30px;
-    border-radius: 16px;
-    width: 340px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+
+.theme-toggle {
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    /* Увеличенная область для пальца */
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px; /* Чуть крупнее иконки */
+    transition: all 0.2s;
+    /* Чтобы кнопка не сжималась */
+    flex-shrink: 0;
 }
-h2 {
-    text-align: center;
+
+.theme-toggle:active {
+    transform: scale(0.92);
+    background: rgba(255,255,255,0.05);
 }
+
+.field {
+    margin-bottom: 14px;
+}
+
+label {
+    display: block;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 6px;
+}
+
 input {
     width: 100%;
-    padding: 10px;
-    margin-top: 8px;
-    margin-bottom: 12px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-}
-button {
-    width: 100%;
-    padding: 12px;
-    background: linear-gradient(135deg, #4facfe, #00f2fe);
-    border: none;
-    color: white;
-    font-size: 16px;
+    padding: 11px 12px;
     border-radius: 10px;
-    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--input);
+    color: var(--text);
+    font-size: 14px;
+    transition: border-color 0.2s, background-color 0.3s;
+    -webkit-appearance: none;
+    appearance: none;
 }
-button:hover {
+
+input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+button.calculate {
+    width: 100%;
+    margin-top: 8px;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    background: var(--accent);
+    color: white;
+    font-weight: 500;
+    font-size: 15px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+button.calculate:hover {
     opacity: 0.9;
 }
-.result {
-    margin-top: 20px;
-    font-size: 16px;
-    font-weight: bold;
-    text-align: center;
+
+button.calculate:active {
+    transform: scale(0.98);
 }
-.small {
-    font-size: 14px;
-    font-weight: normal;
-    margin-top: 6px;
+
+.result {
+    margin-top: 18px;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: rgba(0,0,0,0.08);
+}
+
+.result-main {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    word-break: break-all;
+}
+
+.result-row {
+    font-size: 13px;
+    color: var(--muted);
+}
+
+@media (max-width: 480px) {
+    .wrapper {
+        padding: 20px;
+    }
+    input {
+        font-size: 16px; 
+        padding: 12px;
+    }
+    body {
+        align-items: flex-start;
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
 }
 </style>
 </head>
 <body>
 
-<div class="card">
-    <h2>Калькулятор плана</h2>
+<div class="wrapper">
+    <div class="header">
+        <h1>Калькулятор АУМ</h1>
+        <button class="theme-toggle" type="button" onclick="toggleTheme()">🌙 / ☀️</button>
+    </div>
 
-    <input id="x0" type="number" placeholder="Начальная сумма">
-    <input id="P1" type="number" placeholder="План 1">
-    <input id="P2" type="number" placeholder="План 2">
-    <input id="P3" type="number" placeholder="План 3">
+    <div class="field">
+        <label>АУ на начало квартала</label>
+        <input id="x0" type="number" inputmode="decimal" placeholder="0">
+    </div>
 
-    <button onclick="calculate()">Рассчитать</button>
+    <div class="field">
+        <label>План на 1 месяц</label>
+        <input id="P1" type="number" inputmode="decimal" placeholder="0">
+    </div>
 
-    <div class="result" id="result"></div>
+    <div class="field">
+        <label>План на 2 месяц</label>
+        <input id="P2" type="number" inputmode="decimal" placeholder="0">
+    </div>
+
+    <div class="field">
+        <label>План на 3 месяц</label>
+        <input id="P3" type="number" inputmode="decimal" placeholder="0">
+    </div>
+
+    <button class="calculate" onclick="calculate()">Рассчитать</button>
+
+    <div class="result" id="result" style="display:none;"></div>
 </div>
 
 <script>
-function calculate() {
-    let x0 = parseFloat(document.getElementById("x0").value);
-    let P1 = parseFloat(document.getElementById("P1").value);
-    let P2 = parseFloat(document.getElementById("P2").value);
-    let P3 = parseFloat(document.getElementById("P3").value);
-
-    if (isNaN(x0) || isNaN(P1) || isNaN(P2) || isNaN(P3)) {
-        document.getElementById("result").innerText = "Заполните все поля";
-        return;
+    // ИСПРАВЛЕНИЕ: Переключаем класс на HTML (documentElement), а не на body
+    // Это гарантирует корректную перерисовку переменных на всех мобильных
+    function toggleTheme() {
+        document.documentElement.classList.toggle("light");
     }
+    
+    function calculate() {
+        let x0 = parseFloat(document.getElementById("x0").value) || 0;
+        let P1 = parseFloat(document.getElementById("P1").value) || 0;
+        let P2 = parseFloat(document.getElementById("P2").value) || 0;
+        let P3 = parseFloat(document.getElementById("P3").value) || 0;
+        
+        let resultDiv = document.getElementById("result");
+        resultDiv.style.display = "block";
 
-    let invSum = 1/P1 + 1/P2 + 1/P3;
-
-    // ЦЕЛЬ = 100.1% => 1.001
-    let target = 1.00001 * 3;
-
-    // ТОЧНАЯ ФОРМУЛА
-    let x = (target - x0 * invSum) / invSum;
-
-    let q1 = (x0 + x) / P1 * 100;
-    let q2 = (x0 + x) / P2 * 100;
-    let q3 = (x0 + x) / P3 * 100;
-    let S = (q1 + q2 + q3) / 3;
-
-    document.getElementById("result").innerHTML = `
-        Нужно выполнять план: <br>
-        <b>${x.toFixed(2)}</b>
-        <div class="small">Месяц 1 = ${q1.toFixed(2)}%</div>
-        <div class="small">Месяц 2 = ${q2.toFixed(2)}%</div>
-        <div class="small">Месяц 3 = ${q3.toFixed(2)}%</div>
-        <div class="small">Квартал = ${S.toFixed(3)}%</div>
-    `;
-}
+        if (!P1 || !P2 || !P3) {
+            resultDiv.innerHTML = "План не может быть равен нулю";
+            return;
+        }
+    
+        let sumInv = (1/P1 + 1/P2 + 1/P3);
+        let target = 100.001; 
+        let x = (target/100 * 3 - x0 * sumInv) / sumInv;
+    
+        let q1 = (x0 + x) / P1 * 100;
+        let q2 = (x0 + x) / P2 * 100;
+        let q3 = (x0 + x) / P3 * 100;
+        let S = (q1 + q2 + q3) / 3;
+    
+        resultDiv.innerHTML = `
+            <div class="result-main">${x.toFixed(2)}</div>
+            <div class="result-row">Месяц 1: ${q1.toFixed(2)}%</div>
+            <div class="result-row">Месяц 2: ${q2.toFixed(2)}%</div>
+            <div class="result-row">Месяц 3: ${q3.toFixed(2)}%</div>
+            <div class="result-row">Среднее: ${S.toFixed(3)}%</div>
+        `;
+    }
+    
+    document.querySelectorAll('input').forEach(input => {
+        input.addEventListener('keydown', function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                calculate();
+                document.activeElement.blur(); 
+            }
+        });
+    });
 </script>
 
 </body>
